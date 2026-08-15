@@ -1,0 +1,5 @@
+sample	condition	fq1	fq2
+sample1	control	resources/reads/sample1_R1.fastq.gz	resources/reads/sample1_R2.fastq.gz
+sample2	control	resources/reads/sample2_R1.fastq.gz	resources/reads/sample2_R2.fastq.gz
+sample3	treated	resources/reads/sample3_R1.fastq.gz	resources/reads/sample3_R2.fastq.gz
+sample4	treated	resources/reads/sample4_R1.fastq.gz	resources/reads/sample4_R2.fastq.gz

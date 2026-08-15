@@ -1,0 +1,21 @@
+samples: config/samples.tsv
+
+# Reference files — point these at your downloaded reference
+# For the nf-core/test-datasets rnaseq test data, use the small chr21-only
+# transcriptome/genome fasta + GTF they provide so runs finish in minutes.
+ref:
+  transcriptome_fasta: "resources/reference/transcriptome.fa"
+  gtf: "resources/reference/annotation.gtf"
+
+params:
+  fastp:
+    extra: ""
+  salmon_index:
+    extra: "-k 31"
+  salmon_quant:
+    libtype: "A"  # auto-detect library type
+
+threads:
+  fastp: 4
+  salmon_index: 4
+  salmon_quant: 8

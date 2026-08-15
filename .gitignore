@@ -10,6 +10,7 @@ pipelines/*/.nextflow/
 pipelines/*/.nextflow.log*
 
 # Common junk
+.Rhistory
 .DS_Store
 __pycache__/
 *.pyc

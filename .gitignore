@@ -1,0 +1,16 @@
+# Generated pipeline outputs / large data — regenerate, don't commit
+pipelines/*/results/
+pipelines/*/logs/
+pipelines/*/resources/reads/
+pipelines/*/resources/reference/
+pipelines/*/resources/salmon_index/
+pipelines/*/.snakemake/
+pipelines/*/work/
+pipelines/*/.nextflow/
+pipelines/*/.nextflow.log*
+
+# Common junk
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/

@@ -20,26 +20,16 @@ tx2gene <- unique(tx2gene[tx2gene$type == "transcript", c("transcript_id", "gene
 txi <- tximport(quant_files, type = "salmon", tx2gene = tx2gene, dropInfReps = TRUE)
 
 dds <- DESeqDataSetFromTximport(txi, colData = samples, design = ~condition)
-
-# Too few genes (6, in our synthetic test set) for DESeq2's default dispersion
-# trend curve fit to work reliably. Skip the trend fit and use each gene's
-# own dispersion estimate directly, per DESeq2's own suggested workaround.
-dds <- estimateSizeFactors(dds)
-dds <- estimateDispersionsGeneEst(dds)
-dispersions(dds) <- mcols(dds)$dispGeneEst
-dds <- nbinomWaldTest(dds)
+dds <- DESeq(dds)
 
 res <- results(dds)
 write.csv(as.data.frame(res), snakemake@output[["results"]])
 
-# vst()/varianceStabilizingTransformation() both expect a fitted dispersion
-# trend, which we skipped above for the same too-few-genes reason. A plain
-# log2 transform of normalized counts is sufficient for a sanity-check PCA
-# on a dataset this small.
-log_counts <- log2(counts(dds, normalized = TRUE) + 1)
-pca <- prcomp(t(log_counts), scale. = TRUE)
-pca_data <- as.data.frame(pca$x[, 1:2])
-pca_data$condition <- samples$condition
+# vst() needs ~1000+ genes to subsample from; with 124 real genes here,
+# varianceStabilizingTransformation() (the exact, non-subsampled version)
+# is the appropriate choice instead.
+vsd <- varianceStabilizingTransformation(dds, blind = FALSE)
+pca_data <- plotPCA(vsd, intgroup = "condition", returnData = TRUE)
 p <- ggplot(pca_data, aes(PC1, PC2, color = condition)) +
     geom_point(size = 3) +
     theme_minimal() +

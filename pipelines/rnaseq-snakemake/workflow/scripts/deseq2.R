@@ -17,10 +17,10 @@ tx2gene <- rtracklayer::import(snakemake@input[["gtf"]])
 tx2gene <- as.data.frame(tx2gene)
 tx2gene <- unique(tx2gene[tx2gene$type == "transcript", c("transcript_id", "gene_id")])
 
-txi <- tximport(quant_files, type = "salmon", tx2gene = tx2gene)
+txi <- tximport(quant_files, type = "salmon", tx2gene = tx2gene, dropInfReps = TRUE)
 
 dds <- DESeqDataSetFromTximport(txi, colData = samples, design = ~condition)
-dds <- DESeq(dds)
+dds <- DESeq(dds, fitType = "mean")
 
 res <- results(dds)
 write.csv(as.data.frame(res), snakemake@output[["results"]])

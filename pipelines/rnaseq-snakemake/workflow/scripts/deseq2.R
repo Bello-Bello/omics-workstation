@@ -32,8 +32,14 @@ dds <- nbinomWaldTest(dds)
 res <- results(dds)
 write.csv(as.data.frame(res), snakemake@output[["results"]])
 
-vsd <- vst(dds, blind = FALSE)
-pca_data <- plotPCA(vsd, intgroup = "condition", returnData = TRUE)
+# vst()/varianceStabilizingTransformation() both expect a fitted dispersion
+# trend, which we skipped above for the same too-few-genes reason. A plain
+# log2 transform of normalized counts is sufficient for a sanity-check PCA
+# on a dataset this small.
+log_counts <- log2(counts(dds, normalized = TRUE) + 1)
+pca <- prcomp(t(log_counts), scale. = TRUE)
+pca_data <- as.data.frame(pca$x[, 1:2])
+pca_data$condition <- samples$condition
 p <- ggplot(pca_data, aes(PC1, PC2, color = condition)) +
     geom_point(size = 3) +
     theme_minimal() +

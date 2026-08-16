@@ -11,4 +11,4 @@ rule multiqc:
         "logs/multiqc.log"
     shell:
         "multiqc results/fastqc results/trimmed results/salmon "
-        "--outdir results/multiqc > {log} 2>&1"
+        "--outdir results/multiqc --force > {log} 2>&1"

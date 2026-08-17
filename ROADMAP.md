@@ -21,10 +21,10 @@ Build the SAME pipeline twice — this is the point, not a detour:
 
 Pipeline steps (same in both): FastQC → fastp (trim) → Salmon (quant) → MultiQC → DESeq2 (R)
 
-- [ ] Get test data (see rnaseq-snakemake README)
-- [ ] Snakemake version runs end-to-end on test data
-- [ ] Nextflow version runs end-to-end on test data
-- [ ] Both containerized (conda env or Docker) and documented
+- [x] Get test data (see rnaseq-snakemake README)
+- [x] Snakemake version runs end-to-end on test data
+- [x] Nextflow version runs end-to-end on test data
+- [x] Both containerized (conda env) and documented — Docker still open, see Week 9-12
 
 ## Week 5-6 — Statistical Modeling Module
 Use the DESeq2 output from the pipeline above as real data — not a toy dataset.

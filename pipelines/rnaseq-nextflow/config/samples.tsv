@@ -1,0 +1,7 @@
+sample	condition	fq1	fq2
+WT_REP1	WT	resources/reads/WT_REP1_R1.fastq.gz	resources/reads/WT_REP1_R2.fastq.gz
+WT_REP2	WT	resources/reads/WT_REP2_R1.fastq.gz	resources/reads/WT_REP2_R2.fastq.gz
+WT_REP3	WT	resources/reads/WT_REP3_R1.fastq.gz	resources/reads/WT_REP3_R2.fastq.gz
+RAP1_IAA_REP1	RAP1_IAA	resources/reads/RAP1_IAA_REP1_R1.fastq.gz	resources/reads/RAP1_IAA_REP1_R2.fastq.gz
+RAP1_IAA_REP2	RAP1_IAA	resources/reads/RAP1_IAA_REP2_R1.fastq.gz	resources/reads/RAP1_IAA_REP2_R2.fastq.gz
+RAP1_IAA_REP3	RAP1_IAA	resources/reads/RAP1_IAA_REP3_R1.fastq.gz	resources/reads/RAP1_IAA_REP3_R2.fastq.gz

@@ -1,0 +1,8 @@
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - bioconductor-deseq2=1.42.*
+  - bioconductor-tximport=1.30.*
+  - bioconductor-rtracklayer=1.62.*
+  - r-ggplot2=3.5.*

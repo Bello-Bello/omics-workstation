@@ -6,6 +6,7 @@ rule deseq2:
     output:
         results="results/deseq2/results.csv",
         pca="results/deseq2/pca.png",
+        counts="results/deseq2/counts_normalized.csv",
     conda:
         "../envs/deseq2.yaml"
     log:

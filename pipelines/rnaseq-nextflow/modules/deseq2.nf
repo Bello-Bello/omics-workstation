@@ -10,6 +10,7 @@ process DESEQ2 {
     output:
     path "results.csv"
     path "pca.png"
+    path "counts_normalized.csv"
 
     script:
     """

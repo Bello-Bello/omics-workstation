@@ -27,6 +27,9 @@ dds <- DESeq(dds)
 res <- results(dds)
 write.csv(as.data.frame(res), "results.csv")
 
+# Per-sample normalized counts, for the stats module's own hypothesis tests.
+write.csv(counts(dds, normalized = TRUE), "counts_normalized.csv")
+
 vsd <- varianceStabilizingTransformation(dds, blind = FALSE)
 pca_data <- plotPCA(vsd, intgroup = "condition", returnData = TRUE)
 p <- ggplot(pca_data, aes(PC1, PC2, color = condition)) +

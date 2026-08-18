@@ -18,3 +18,4 @@ rule all:
         "results/multiqc/multiqc_report.html",
         "results/deseq2/results.csv",
         "results/deseq2/pca.png",
+        "results/deseq2/counts_normalized.csv",

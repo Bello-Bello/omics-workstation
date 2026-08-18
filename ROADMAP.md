@@ -28,10 +28,10 @@ Pipeline steps (same in both): FastQC → fastp (trim) → Salmon (quant) → Mu
 
 ## Week 5-6 — Statistical Modeling Module
 Use the DESeq2 output from the pipeline above as real data — not a toy dataset.
-- [ ] Hypothesis testing refresher (t-test, Wilcoxon, when each applies)
-- [ ] Negative binomial GLM — the actual model behind DESeq2, understand what it's doing
-- [ ] Multiple testing correction (Bonferroni vs BH/FDR) and why RNA-seq needs it
-- [ ] PCA / clustering for QC (sample outlier detection)
+- [x] Hypothesis testing refresher (t-test, Wilcoxon, when each applies)
+- [x] Negative binomial GLM — the actual model behind DESeq2, understand what it's doing
+- [x] Multiple testing correction (Bonferroni vs BH/FDR) and why RNA-seq needs it
+- [x] PCA / clustering for QC (sample outlier detection)
 - [ ] Write this up as a notebook: [stats/rnaseq-stats-notebook/](stats/)
 
 ## Week 6-9 — Flagship Pipeline #2 (pick one, don't do both)

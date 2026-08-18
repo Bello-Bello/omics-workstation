@@ -25,6 +25,11 @@ dds <- DESeq(dds)
 res <- results(dds)
 write.csv(as.data.frame(res), snakemake@output[["results"]])
 
+# Per-sample normalized counts (not just the per-gene summary stats above) —
+# needed downstream for the stats module, which runs its own hypothesis
+# tests per gene and compares them against DESeq2's.
+write.csv(counts(dds, normalized = TRUE), snakemake@output[["counts"]])
+
 # vst() needs ~1000+ genes to subsample from; with 124 real genes here,
 # varianceStabilizingTransformation() (the exact, non-subsampled version)
 # is the appropriate choice instead.

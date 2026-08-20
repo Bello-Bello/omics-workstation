@@ -34,13 +34,18 @@ Use the DESeq2 output from the pipeline above as real data — not a toy dataset
 - [x] PCA / clustering for QC (sample outlier detection)
 - [ ] Write this up as a notebook: [stats/rnaseq-stats-notebook/](stats/)
 
-## Week 6-9 — Flagship Pipeline #2 (pick one, don't do both)
-- [ ] **scRNA-seq** (recommended — higher current industry demand): Cell Ranger or
-      STARsolo → Scanpy (Python) or Seurat (R), QC/filtering, clustering, marker genes.
-      Build in Nextflow directly (you already know it from Pipeline #1).
-- [ ] *or* **Variant calling (DNA-seq)**: GATK best-practices style — align (BWA) →
-      mark duplicates → call variants (GATK HaplotypeCaller) → filter/annotate.
-      Look at nf-core/sarek as a reference implementation, don't just copy it.
+## Week 6-9 — Flagship Pipeline #2 and #3
+Original plan said pick one; user opted to do both, scRNA-seq first. Noted as
+a scope expansion beyond the original "depth over breadth" default — revisit
+pace if it starts crowding out the polish/application-sending phase.
+
+- [ ] **scRNA-seq** (up first): quantification → Scanpy (Python), QC/filtering,
+      clustering, marker genes. Build in Nextflow (you already know it from
+      Pipeline #1).
+- [ ] **Variant calling (DNA-seq)** (after scRNA-seq): GATK best-practices style —
+      align (BWA) → mark duplicates → call variants (GATK HaplotypeCaller) →
+      filter/annotate. Look at nf-core/sarek as a reference implementation,
+      don't just copy it.
 
 ## Week 9-12 — Polish for job applications
 - [x] Push everything to GitHub — https://github.com/Bello-Bello/omics-workstation

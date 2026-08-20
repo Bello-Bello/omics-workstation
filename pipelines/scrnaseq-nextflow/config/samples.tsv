@@ -1,0 +1,4 @@
+sample	fq1	fq2
+Sample_X	resources/reads/Sample_X_L001_R1.fastq.gz	resources/reads/Sample_X_L001_R2.fastq.gz
+Sample_Y	resources/reads/Sample_Y_L001_R1.fastq.gz	resources/reads/Sample_Y_L001_R2.fastq.gz
+Sample_Y	resources/reads/Sample_Y_L002_R1.fastq.gz	resources/reads/Sample_Y_L002_R2.fastq.gz

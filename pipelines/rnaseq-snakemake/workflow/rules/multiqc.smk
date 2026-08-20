@@ -7,6 +7,8 @@ rule multiqc:
         "results/multiqc/multiqc_report.html",
     conda:
         "../envs/qc.yaml"
+    container:
+        "docker://quay.io/biocontainers/multiqc:1.21--pyhdfd78af_0"
     log:
         "logs/multiqc.log"
     shell:

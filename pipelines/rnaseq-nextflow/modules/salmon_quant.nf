@@ -1,6 +1,7 @@
 process SALMON_QUANT {
     tag "$sample"
     conda "${projectDir}/envs/quant.yaml"
+    container "quay.io/biocontainers/salmon:1.10.3--h45fbf2d_5"
     publishDir "${params.outdir}/salmon", mode: 'copy'
 
     input:

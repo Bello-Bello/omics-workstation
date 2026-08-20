@@ -1,0 +1,77 @@
+name: rnaseq-snakemake CI
+
+on:
+  push:
+    paths:
+      - "pipelines/rnaseq-snakemake/**"
+      - ".github/workflows/rnaseq-snakemake-ci.yml"
+  pull_request:
+    paths:
+      - "pipelines/rnaseq-snakemake/**"
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/rnaseq-snakemake
+        shell: bash -l {0}   # needed for `conda activate` to work in each step
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          channels: bioconda,conda-forge
+          channel-priority: strict
+
+      - name: Install Snakemake
+        run: mamba install -y -c bioconda -c conda-forge snakemake
+
+      - name: Lint the workflow
+        run: snakemake --lint --snakefile workflow/Snakefile || echo "lint found issues (non-blocking)"
+
+      # Real yeast RNA-seq data (GSE110004) — not committed (gitignored,
+      # ~26 MB), same public source used throughout local development.
+      - name: Download real test data
+        run: |
+          mkdir -p resources/reads resources/reference
+          BASE="https://raw.githubusercontent.com/nf-core/test-datasets/rnaseq/testdata/GSE110004"
+          for pair in WT_REP1:SRR6357070 WT_REP2:SRR6357071 WT_REP3:SRR6357072 \
+                      RAP1_IAA_REP1:SRR6357076 RAP1_IAA_REP2:SRR6357077 RAP1_IAA_REP3:SRR6357078; do
+            sample="${pair%%:*}"
+            srr="${pair##*:}"
+            curl -sL "${BASE}/${srr}_1.fastq.gz" -o "resources/reads/${sample}_R1.fastq.gz"
+            curl -sL "${BASE}/${srr}_2.fastq.gz" -o "resources/reads/${sample}_R2.fastq.gz"
+          done
+          REF="https://raw.githubusercontent.com/nf-core/test-datasets/rnaseq"
+          curl -sL "${REF}/reference/transcriptome.fasta" -o resources/reference/transcriptome.fa
+          curl -sL "${REF}/reference/genes.gtf.gz" -o resources/reference/annotation.gtf.gz
+          gunzip resources/reference/annotation.gtf.gz
+
+      - name: Dry run (DAG check)
+        run: snakemake --use-conda --cores 2 -n --snakefile workflow/Snakefile
+
+      - name: Run pipeline
+        run: snakemake --use-conda --cores 2 --snakefile workflow/Snakefile
+
+      - name: Verify real output was produced
+        run: |
+          test -s results/deseq2/results.csv
+          test -s results/deseq2/pca.png
+          test -s results/multiqc/multiqc_report.html
+          n_sig=$(awk -F',' 'NR>1 && $7!="NA" && $7<0.05' results/deseq2/results.csv | wc -l)
+          echo "Significant genes (padj < 0.05): $n_sig"
+          if [ "$n_sig" -lt 1 ]; then
+            echo "::error::Expected at least 1 significant gene, found $n_sig"
+            exit 1
+          fi
+
+      - name: Upload results as a build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snakemake-results
+          path: pipelines/rnaseq-snakemake/results/
+          retention-days: 14

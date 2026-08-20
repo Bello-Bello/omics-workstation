@@ -1,5 +1,7 @@
 # rnaseq-snakemake
 
+[![rnaseq-snakemake CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-snakemake-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-snakemake-ci.yml)
+
 A bulk RNA-seq pipeline: **FastQC → fastp → Salmon → MultiQC → DESeq2**.
 
 This is flagship pipeline #1 (Snakemake implementation) in the

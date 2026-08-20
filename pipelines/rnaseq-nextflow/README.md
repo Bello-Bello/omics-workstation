@@ -1,5 +1,7 @@
 # rnaseq-nextflow
 
+[![rnaseq-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml)
+
 Nextflow (DSL2) port of [rnaseq-snakemake](../rnaseq-snakemake/) — same biology,
 same tools, same real yeast dataset (GSE110004, WT vs RAP1_IAA), different
 workflow manager. See the [skills roadmap](../../ROADMAP.md).

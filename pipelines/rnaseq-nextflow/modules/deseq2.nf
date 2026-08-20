@@ -1,5 +1,6 @@
 process DESEQ2 {
     conda "${projectDir}/envs/deseq2.yaml"
+    container "omics-deseq2:1.0"
     publishDir "${params.outdir}/deseq2", mode: 'copy'
 
     input:

@@ -7,6 +7,8 @@ rule fastqc_raw:
         html2="results/fastqc/raw/{sample}_R2_fastqc.html",
     conda:
         "../envs/qc.yaml"
+    container:
+        "docker://quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0"
     log:
         "logs/fastqc/raw/{sample}.log"
     shell:

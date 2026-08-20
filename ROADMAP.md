@@ -43,10 +43,16 @@ Use the DESeq2 output from the pipeline above as real data — not a toy dataset
       Look at nf-core/sarek as a reference implementation, don't just copy it.
 
 ## Week 9-12 — Polish for job applications
-- [ ] Docker containers for both flagship pipelines (not just conda envs)
+- [x] Push everything to GitHub — https://github.com/Bello-Bello/omics-workstation
+- [x] Docker containers for both flagship pipelines — Nextflow fully runs via
+      Docker (tested, `-profile docker`); Snakemake has `container:`
+      directives added but runs via Apptainer/HPC tooling, not locally tested
+      on macOS — conda remains its verified path (documented honestly in
+      both pipeline READMEs, including a real conda-vs-Docker platform
+      reproducibility caveat found while testing)
 - [ ] GitHub Actions CI: lint + run on test data on every push
 - [ ] Write real READMEs: what it does, how to run it, example output/plots
-- [ ] Push everything to GitHub, pin repos, link from CV/LinkedIn
+- [ ] Pin the repo, link from CV/LinkedIn
 - [ ] Optional: write a short blog post per pipeline (signals communication skill)
 
 ## Proteomics — deferred

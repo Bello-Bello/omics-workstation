@@ -1,6 +1,7 @@
 process FASTQC_RAW {
     tag "$sample"
     conda "${projectDir}/envs/qc.yaml"
+    container "quay.io/biocontainers/fastqc:0.12.1--hdfd78af_0"
     publishDir "${params.outdir}/fastqc/raw", mode: 'copy'
 
     input:

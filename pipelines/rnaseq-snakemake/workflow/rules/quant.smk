@@ -8,6 +8,8 @@ rule salmon_index:
     threads: config["threads"]["salmon_index"]
     conda:
         "../envs/quant.yaml"
+    container:
+        "docker://quay.io/biocontainers/salmon:1.10.3--h45fbf2d_5"
     log:
         "logs/salmon/index.log"
     shell:
@@ -27,6 +29,8 @@ rule salmon_quant:
     threads: config["threads"]["salmon_quant"]
     conda:
         "../envs/quant.yaml"
+    container:
+        "docker://quay.io/biocontainers/salmon:1.10.3--h45fbf2d_5"
     log:
         "logs/salmon/quant/{sample}.log"
     shell:

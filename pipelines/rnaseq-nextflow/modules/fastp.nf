@@ -1,6 +1,7 @@
 process FASTP {
     tag "$sample"
     conda "${projectDir}/envs/qc.yaml"
+    container "quay.io/biocontainers/fastp:0.23.4--h125f33a_5"
     publishDir "${params.outdir}/trimmed", mode: 'copy'
 
     input:

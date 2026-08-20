@@ -12,6 +12,8 @@ rule fastp:
     threads: config["threads"]["fastp"]
     conda:
         "../envs/qc.yaml"
+    container:
+        "docker://quay.io/biocontainers/fastp:0.23.4--h125f33a_5"
     log:
         "logs/fastp/{sample}.log"
     shell:

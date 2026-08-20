@@ -50,8 +50,12 @@ Use the DESeq2 output from the pipeline above as real data — not a toy dataset
       on macOS — conda remains its verified path (documented honestly in
       both pipeline READMEs, including a real conda-vs-Docker platform
       reproducibility caveat found while testing)
-- [ ] GitHub Actions CI: lint + run on test data on every push
-- [ ] Write real READMEs: what it does, how to run it, example output/plots
+- [x] GitHub Actions CI: real end-to-end runs (not just lint) on every push —
+      both pipelines download real test data fresh and run for real on
+      GitHub's runners; caught and fixed one genuine CI-only bug (a strict
+      conda channel-priority setting that broke the deseq2 env solve)
+- [x] Write real READMEs: top-level + all 3 component READMEs rewritten,
+      CI badges added, a real result image embedded in the top-level README
 - [ ] Pin the repo, link from CV/LinkedIn
 - [ ] Optional: write a short blog post per pipeline (signals communication skill)
 

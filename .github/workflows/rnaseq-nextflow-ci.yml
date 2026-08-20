@@ -1,0 +1,73 @@
+name: rnaseq-nextflow CI
+
+on:
+  push:
+    paths:
+      - "pipelines/rnaseq-nextflow/**"
+      - ".github/workflows/rnaseq-nextflow-ci.yml"
+  pull_request:
+    paths:
+      - "pipelines/rnaseq-nextflow/**"
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/rnaseq-nextflow
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nextflow
+        run: |
+          curl -s https://get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+          nextflow -version
+
+      # ubuntu-latest ships Docker pre-installed and running, so no separate
+      # setup step is needed here — same reason Docker CI is faster than
+      # conda CI, not just more portable.
+      - name: Build the custom DESeq2 image
+        run: docker build -t omics-deseq2:1.0 -f docker/deseq2.Dockerfile .
+
+      # Real yeast RNA-seq data (GSE110004), same public nf-core/test-datasets
+      # source used throughout local development — not committed to the repo
+      # (gitignored, ~26 MB), so CI fetches it fresh on every run.
+      - name: Download real test data
+        run: |
+          mkdir -p resources/reads resources/reference
+          BASE="https://raw.githubusercontent.com/nf-core/test-datasets/rnaseq/testdata/GSE110004"
+          for pair in WT_REP1:SRR6357070 WT_REP2:SRR6357071 WT_REP3:SRR6357072 \
+                      RAP1_IAA_REP1:SRR6357076 RAP1_IAA_REP2:SRR6357077 RAP1_IAA_REP3:SRR6357078; do
+            sample="${pair%%:*}"
+            srr="${pair##*:}"
+            curl -sL "${BASE}/${srr}_1.fastq.gz" -o "resources/reads/${sample}_R1.fastq.gz"
+            curl -sL "${BASE}/${srr}_2.fastq.gz" -o "resources/reads/${sample}_R2.fastq.gz"
+          done
+          REF="https://raw.githubusercontent.com/nf-core/test-datasets/rnaseq"
+          curl -sL "${REF}/reference/transcriptome.fasta" -o resources/reference/transcriptome.fa
+          curl -sL "${REF}/reference/genes.gtf.gz" -o resources/reference/annotation.gtf.gz
+          gunzip resources/reference/annotation.gtf.gz
+
+      - name: Run pipeline via Docker
+        run: nextflow run main.nf -profile docker
+
+      - name: Verify real output was produced
+        run: |
+          test -s results/deseq2/results.csv
+          test -s results/deseq2/pca.png
+          test -s results/multiqc/multiqc_report.html
+          n_sig=$(awk -F',' 'NR>1 && $7!="NA" && $7<0.05' results/deseq2/results.csv | wc -l)
+          echo "Significant genes (padj < 0.05): $n_sig"
+          if [ "$n_sig" -lt 1 ]; then
+            echo "::error::Expected at least 1 significant gene, found $n_sig"
+            exit 1
+          fi
+
+      - name: Upload results as a build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextflow-results
+          path: pipelines/rnaseq-nextflow/results/
+          retention-days: 14

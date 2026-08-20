@@ -24,7 +24,12 @@ jobs:
         with:
           miniforge-version: latest
           channels: bioconda,conda-forge
-          channel-priority: strict
+          # NOT strict: the deseq2 env needs packages spanning both channels
+          # (Bioconductor packages from bioconda, R/r-ggplot2 mostly from
+          # conda-forge) — strict priority breaks that combination by
+          # excluding packages from the lower-priority channel entirely.
+          # Never set locally, which is why this only surfaced in CI.
+          channel-priority: flexible
 
       - name: Install Snakemake
         run: mamba install -y -c bioconda -c conda-forge snakemake

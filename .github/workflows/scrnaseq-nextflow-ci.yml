@@ -1,0 +1,58 @@
+name: scrnaseq-nextflow CI
+
+on:
+  push:
+    paths:
+      - "pipelines/scrnaseq-nextflow/**"
+      - ".github/workflows/scrnaseq-nextflow-ci.yml"
+  pull_request:
+    paths:
+      - "pipelines/scrnaseq-nextflow/**"
+
+jobs:
+  run-perturbation-workflow:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/scrnaseq-nextflow
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nextflow
+        run: |
+          curl -s https://get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+          nextflow -version
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          channels: conda-forge,bioconda
+
+      # Public sci-Plex data (Srivatsan et al. 2020), fetched fresh via
+      # pertpy — same source used in local development, not committed
+      # (gitignored, ~470 MB).
+      - name: Run perturbation.nf
+        run: nextflow run perturbation.nf
+
+      - name: Verify real output was produced
+        run: |
+          test -s results/perturbation/differential_expression.csv
+          test -s results/perturbation/summary.json
+          test -s results/perturbation/umap_condition_cluster.png
+          n_sig=$(python3 -c "import json; s=json.load(open('results/perturbation/summary.json')); print(sum(s['n_significant_per_condition'].values()))")
+          echo "Total significant DE genes across all conditions: $n_sig"
+          if [ "$n_sig" -lt 1 ]; then
+            echo "::error::Expected at least 1 significant DE gene, found $n_sig"
+            exit 1
+          fi
+
+      - name: Upload results as a build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrnaseq-nextflow-results
+          path: pipelines/scrnaseq-nextflow/results/perturbation/
+          retention-days: 14

@@ -1,0 +1,10 @@
+dataset: sciplex2
+
+perturbation:
+  perturbation_col: perturbation
+  dose_col: dose_value
+  control_label: control
+  mt_prefix: "MT-"     # human A549 cells — "mt-" if ever pointed at mouse data
+  min_genes: 200
+  max_pct_mt: 20.0
+  leiden_resolution: 0.5

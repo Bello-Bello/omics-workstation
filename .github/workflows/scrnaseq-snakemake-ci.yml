@@ -1,0 +1,59 @@
+name: scrnaseq-snakemake CI
+
+on:
+  push:
+    paths:
+      - "pipelines/scrnaseq-snakemake/**"
+      - ".github/workflows/scrnaseq-snakemake-ci.yml"
+  pull_request:
+    paths:
+      - "pipelines/scrnaseq-snakemake/**"
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/scrnaseq-snakemake
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          channels: bioconda,conda-forge
+          channel-priority: flexible
+
+      - name: Install Snakemake
+        run: mamba install -y -c bioconda -c conda-forge snakemake
+
+      - name: Dry run (DAG check)
+        run: snakemake --use-conda --cores 2 -n --snakefile workflow/Snakefile
+
+      # Public sci-Plex data (Srivatsan et al. 2020), fetched fresh via
+      # pertpy inside the fetch_perturbation_data rule — not committed
+      # (gitignored, ~470 MB).
+      - name: Run pipeline
+        run: snakemake --use-conda --cores 2 --snakefile workflow/Snakefile
+
+      - name: Verify real output was produced
+        run: |
+          test -s results/perturbation/differential_expression.csv
+          test -s results/perturbation/summary.json
+          test -s results/perturbation/umap_condition_cluster.png
+          n_sig=$(python3 -c "import json; s=json.load(open('results/perturbation/summary.json')); print(sum(s['n_significant_per_condition'].values()))")
+          echo "Total significant DE genes across all conditions: $n_sig"
+          if [ "$n_sig" -lt 1 ]; then
+            echo "::error::Expected at least 1 significant DE gene, found $n_sig"
+            exit 1
+          fi
+
+      - name: Upload results as a build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scrnaseq-snakemake-results
+          path: pipelines/scrnaseq-snakemake/results/perturbation/
+          retention-days: 14

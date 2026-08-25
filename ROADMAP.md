@@ -39,9 +39,16 @@ Original plan said pick one; user opted to do both, scRNA-seq first. Noted as
 a scope expansion beyond the original "depth over breadth" default — revisit
 pace if it starts crowding out the polish/application-sending phase.
 
-- [ ] **scRNA-seq** (up first): quantification → Scanpy (Python), QC/filtering,
-      clustering, marker genes. Build in Nextflow (you already know it from
-      Pipeline #1).
+- [x] **scRNA-seq** (up first): quantification (STARsolo) → Scanpy (Python),
+      QC/filtering, clustering, marker genes — built in Nextflow, real macOS
+      STAR bug found and worked around. Scope expanded beyond the original
+      quantification-mechanics goal to include a real perturbation-screen
+      case study (public sci-Plex drug-dose-response data, real differential
+      expression, real dose-response curves) once a specific job posting
+      called out perturbation-screen experience — see
+      [pipelines/scrnaseq-nextflow/](pipelines/scrnaseq-nextflow/) and its
+      Snakemake cross-verification in
+      [pipelines/scrnaseq-snakemake/](pipelines/scrnaseq-snakemake/).
 - [ ] **Variant calling (DNA-seq)** (after scRNA-seq): GATK best-practices style —
       align (BWA) → mark duplicates → call variants (GATK HaplotypeCaller) →
       filter/annotate. Look at nf-core/sarek as a reference implementation,

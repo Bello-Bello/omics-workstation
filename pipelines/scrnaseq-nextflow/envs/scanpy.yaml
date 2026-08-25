@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python>=3.12
+  - scanpy=1.12
+  - anndata=0.13
+  - leidenalg=0.12
+  - python-igraph=1.0
+  - pandas
+  - numpy
+  - matplotlib
+  - pip
+  - pip:
+      - pertpy

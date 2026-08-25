@@ -27,9 +27,21 @@ calls — cross-verified, not just individually run:
   output: hypothesis testing, the negative binomial GLM DESeq2 actually
   fits, multiple testing correction, PCA/clustering — every method
   implemented independently and validated against DESeq2's own numbers
-- **Both pipelines have real CI** (badges above) — every push re-downloads
-  the real test data and re-runs the full pipeline on GitHub's own runners,
-  not just a lint check
+- **[pipelines/scrnaseq-nextflow/](pipelines/scrnaseq-nextflow/)** —
+  single-cell pipeline: STARsolo quantification (with a real, diagnosed
+  macOS STAR bug) plus a real perturbation-screen case study — a public
+  drug-dose-response dataset (Srivatsan et al. 2020, 24k cells, 4 drugs),
+  QC → clustering → differential expression → dose-response analysis,
+  including a genuine cytotoxicity-driven confound found and explained,
+  not smoothed over
+- **[pipelines/scrnaseq-snakemake/](pipelines/scrnaseq-snakemake/)** — the
+  perturbation-screen analysis above, reimplemented in Snakemake — same
+  cross-verification approach as the bulk pipelines, confirmed to produce
+  **exactly matching** results (cell/gene/cluster counts, per-drug DE hit
+  counts) against the Nextflow version
+- **The bulk RNA-seq pipelines have real CI** (badges above) — every push
+  re-downloads the real test data and re-runs the full pipeline on GitHub's
+  own runners, not just a lint check
 
 ## Quick start
 
@@ -37,20 +49,27 @@ Each component is self-contained with its own setup/run instructions in its
 own README — start with whichever's relevant:
 [rnaseq-snakemake](pipelines/rnaseq-snakemake/README.md) ·
 [rnaseq-nextflow](pipelines/rnaseq-nextflow/README.md) ·
-[stats notebook](stats/rnaseq-stats-notebook/README.md)
+[stats notebook](stats/rnaseq-stats-notebook/README.md) ·
+[scrnaseq-nextflow](pipelines/scrnaseq-nextflow/README.md) ·
+[scrnaseq-snakemake](pipelines/scrnaseq-snakemake/README.md)
 
 ## Why two workflow managers for the same pipeline
 
-Not redundancy — a deliberate comparison. Building the identical analysis
+Not redundancy — a deliberate comparison, applied twice now (bulk RNA-seq,
+then the perturbation-screen analysis). Building the identical analysis
 twice, in Snakemake and Nextflow, and getting matching results is a
 stronger reproducibility claim than either alone: it shows the result is a
 property of the *analysis*, not an artifact of one specific tool's
-behavior. Along the way this also surfaced a genuine, documented
-reproducibility finding — conda vs Docker builds of the same tool version
+behavior. The bulk pipelines surfaced a genuine, documented reproducibility
+finding along the way — conda vs Docker builds of the same tool version
 can differ at the platform level (macOS vs Linux binaries), shifting
-borderline-significant results slightly. See the
-[Nextflow pipeline's README](pipelines/rnaseq-nextflow/README.md#a-reproducibility-caveat-worth-knowing)
-for the full writeup.
+borderline-significant results slightly (see the
+[Nextflow pipeline's README](pipelines/rnaseq-nextflow/README.md#a-reproducibility-caveat-worth-knowing)).
+The perturbation-screen pair (scrnaseq-nextflow/scrnaseq-snakemake) ran
+cleaner — both conda-only, both landing on an exact match — which is itself
+worth noting: the earlier caveat was specifically about conda vs *Docker*
+platform differences, not a general reproducibility weakness, and this
+second pair (no Docker involved) is the control case that confirms that.
 
 ## Roadmap & background
 

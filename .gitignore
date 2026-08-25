@@ -4,6 +4,9 @@ pipelines/*/logs/
 pipelines/*/resources/reads/
 pipelines/*/resources/reference/
 pipelines/*/resources/salmon_index/
+pipelines/*/resources/perturbation/
+# pertpy caches downloads to a relative ./data/ dir regardless of requested output path
+pipelines/*/data/
 pipelines/*/.snakemake/
 pipelines/*/work/
 pipelines/*/.nextflow/

@@ -1,0 +1,9 @@
+configfile: "config/config.yaml"
+
+include: "rules/perturbation.smk"
+
+rule all:
+    input:
+        "results/perturbation/differential_expression.csv",
+        "results/perturbation/summary.json",
+        "results/perturbation/umap_condition_cluster.png",

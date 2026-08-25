@@ -2,6 +2,8 @@
 
 [![rnaseq-snakemake CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-snakemake-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-snakemake-ci.yml)
 [![rnaseq-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml)
+[![scrnaseq-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-nextflow-ci.yml)
+[![scrnaseq-snakemake CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml)
 
 A bioinformatics portfolio built on **real published RNA-seq data**, not toy
 examples — automation & reproducible workflows, statistical modeling, and
@@ -39,9 +41,9 @@ calls — cross-verified, not just individually run:
   cross-verification approach as the bulk pipelines, confirmed to produce
   **exactly matching** results (cell/gene/cluster counts, per-drug DE hit
   counts) against the Nextflow version
-- **The bulk RNA-seq pipelines have real CI** (badges above) — every push
-  re-downloads the real test data and re-runs the full pipeline on GitHub's
-  own runners, not just a lint check
+- **All four pipelines have real CI** (badges above) — every push
+  re-downloads the real test/public data and re-runs the full pipeline on
+  GitHub's own runners, not just a lint check
 
 ## Quick start
 

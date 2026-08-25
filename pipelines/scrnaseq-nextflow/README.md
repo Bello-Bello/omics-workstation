@@ -1,5 +1,7 @@
 # scrnaseq-nextflow
 
+[![scrnaseq-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-nextflow-ci.yml)
+
 Two workflows sharing one pipeline directory:
 
 - **`main.nf`** — STARsolo quantification from raw 10x reads (test-scale chr19 data, see [status](#status))

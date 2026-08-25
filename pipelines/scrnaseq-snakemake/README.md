@@ -1,5 +1,7 @@
 # scrnaseq-snakemake
 
+[![scrnaseq-snakemake CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml)
+
 Snakemake port of [scrnaseq-nextflow's `perturbation.nf`](../scrnaseq-nextflow/perturbation.nf) —
 same public drug-screen data, same QC → normalize → cluster → differential-expression logic,
 different workflow manager. Same relationship as `rnaseq-snakemake`/`rnaseq-nextflow`, applied to

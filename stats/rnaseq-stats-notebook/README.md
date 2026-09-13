@@ -1,16 +1,16 @@
 # rnaseq-stats-notebook
 
-Statistical modeling module (Week 5-6 in the [skills roadmap](../../ROADMAP.md)) —
-built entirely on **real DESeq2 output** from [rnaseq-snakemake](../../pipelines/rnaseq-snakemake/)
-(real yeast RNA-seq, GSE110004, `WT` vs `RAP1_IAA`), not synthetic data.
+Statistical modeling built entirely on **real DESeq2 output** from
+[rnaseq-snakemake](../../pipelines/rnaseq-snakemake/) (real yeast RNA-seq,
+GSE110004, `WT` vs `RAP1_IAA`), not synthetic data.
 
-Goal: understand what DESeq2 is actually computing well enough to explain it,
-not just read its output — every method here is implemented from scratch in
-Python and checked against DESeq2's own numbers.
+Each method is reimplemented from scratch in Python and validated against
+DESeq2's own numbers, which makes the modelling assumptions explicit and
+auditable rather than delegated to the package's defaults.
 
 ## Contents (`hypothesis_testing.ipynb`)
 
-1. **Hypothesis testing refresher** — t-test and Wilcoxon rank-sum vs DESeq2's
+1. **Hypothesis testing** — t-test and Wilcoxon rank-sum vs DESeq2's
    own p-values per gene; why RNA-seq needs a purpose-built model rather than
    off-the-shelf tests on small-n discrete count data.
 2. **Negative binomial GLM** — the actual model DESeq2 fits, implemented from

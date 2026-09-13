@@ -26,9 +26,9 @@ geometric mean of its own sample before taking logs, which removes the
 sample-total dependence and lands the data back in ordinary real space
 where Euclidean geometry, PCA, t-tests and clustering all behave.
 
-Implemented here from first principles rather than imported, for the same
-reason as ../../stats/rnaseq-stats-notebook: knowing the formula is not the
-same as knowing what it does to your data. `bin/validate_compositional.py` cross-checks
+Implemented here rather than imported so the zero-replacement and closure
+steps stay explicit and parameterised — they materially affect the result and
+are recorded in the run summary. `bin/validate_compositional.py` cross-checks
 these against scikit-bio and statsmodels where an equivalent exists.
 
 Reference: Aitken, J. (1982) is the usual citation via Aitchison, J.,

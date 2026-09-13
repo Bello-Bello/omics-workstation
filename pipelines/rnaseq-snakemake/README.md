@@ -4,8 +4,7 @@
 
 A bulk RNA-seq pipeline: **FastQC → fastp → Salmon → MultiQC → DESeq2**.
 
-This is flagship pipeline #1 (Snakemake implementation) in the
-[skills roadmap](../../ROADMAP.md), reimplemented in Nextflow in
+The Snakemake implementation, reimplemented in Nextflow in
 [pipelines/rnaseq-nextflow/](../rnaseq-nextflow/) — same biology, same real
 data, different workflow manager, results cross-verified between the two.
 The statistical modeling built on this pipeline's real output lives in
@@ -14,12 +13,12 @@ The statistical modeling built on this pipeline's real output lives in
 Runs on real yeast RNA-seq data (GSE110004): 3 wild-type (`WT`) vs 3
 Rap1-transcription-factor-depleted (`RAP1_IAA`) biological replicates.
 
-## Why this pipeline
+## Why this dataset
 
-It's the standard entry point for demonstrating reproducible-workflow skills:
-short runtime, well-understood biology, and every step maps to a concept
-worth understanding (QC, trimming, pseudo-alignment/quantification,
-differential expression via a negative binomial GLM).
+Short runtime and well-characterised biology make it a tractable basis for
+cross-verification between two workflow managers: any divergence between the
+implementations is attributable to the tooling rather than to ambiguity in
+the underlying result.
 
 ## Structure
 
@@ -59,7 +58,7 @@ Add `-n` first to dry-run and check the DAG before actually executing:
 snakemake --use-conda --cores 4 -n --snakefile workflow/Snakefile
 ```
 
-Visualize the DAG (useful for your portfolio README/screenshots):
+Visualize the DAG:
 ```bash
 snakemake --dag --snakefile workflow/Snakefile | dot -Tpng > dag.png
 ```

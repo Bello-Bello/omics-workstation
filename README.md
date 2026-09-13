@@ -6,9 +6,9 @@
 [![scrnaseq-snakemake CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml)
 [![amplicon-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/amplicon-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/amplicon-nextflow-ci.yml)
 
-A bioinformatics portfolio built on **real published RNA-seq data**, not toy
-examples — automation & reproducible workflows, statistical modeling, and
-data manipulation, demonstrated end to end.
+Five bioinformatics pipelines built on **real published sequencing data**,
+not toy examples — reproducible workflow automation, statistical modeling
+and data engineering, each run end to end and covered by CI.
 
 **The core result:** the same real yeast RNA-seq experiment (GSE110004,
 wild-type vs Rap1 transcription-factor depletion) analyzed by two
@@ -50,11 +50,9 @@ calls — cross-verified, not just individually run:
   differential abundance — cross-checked against scikit-bio and statsmodels.
   Recovers the expected soil biology: *Bradyrhizobium* and *Candidatus
   Nitrososphaera* enriched in vegetated soil, the desiccation-resistant
-  *Rubrobacter* in barren. A hands-on
-  [TUTORIAL.md](pipelines/amplicon-nextflow/TUTORIAL.md) walks through
-  running it and reading the output; a companion
-  [WALKTHROUGH.md](pipelines/amplicon-nextflow/WALKTHROUGH.md) explains each
-  stage and what goes wrong at it.
+  *Rubrobacter* in barren. Vegetation explains 15.2% of community variation
+  (PERMANOVA p = 0.001), and two independent executions produced
+  byte-identical results.
 - **All five pipelines have real CI** (badges above) — every push
   re-downloads the real test/public data and re-runs the full pipeline on
   GitHub's own runners, not just a lint check
@@ -88,10 +86,10 @@ worth noting: the earlier caveat was specifically about conda vs *Docker*
 platform differences, not a general reproducibility weakness, and this
 second pair (no Docker involved) is the control case that confirms that.
 
-## Roadmap & background
+## Scope
 
-This repo is the working record of a structured skills transition
-(wet-lab → bioinformatics analyst), built in public with real debugging
-included, not hidden. **[ROADMAP.md](ROADMAP.md)** is the staged plan with
-progress tracked; **[resources.md](resources.md)** is the curated
-reading list behind it.
+Five pipelines across bulk RNA-seq, single-cell RNA-seq and 16S amplicon
+data, each run on real published datasets and each covered by CI that
+re-executes the full workflow rather than linting it. Where a result was
+surprising or a tool misbehaved, the finding is documented in the relevant
+pipeline's README rather than smoothed over.

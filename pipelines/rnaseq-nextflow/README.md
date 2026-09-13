@@ -4,7 +4,8 @@
 
 Nextflow (DSL2) port of [rnaseq-snakemake](../rnaseq-snakemake/) — same biology,
 same tools, same real yeast dataset (GSE110004, WT vs RAP1_IAA), different
-workflow manager. See the [skills roadmap](../../ROADMAP.md).
+workflow manager. Results are cross-verified against the Snakemake
+implementation.
 
 ## Structure
 

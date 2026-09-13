@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Cross-check the from-scratch compositional methods against reference implementations.
 
-The point of implementing CLR, PERMANOVA and Benjamini-Hochberg by hand is
-to understand them. The point of this script is to make sure understanding
-them did not come at the cost of getting them wrong.
+Correctness gate for the hand-written compositional methods. CI runs it
+before the pipeline, so a fault in the maths fails in a minute rather than
+after a full DADA2 run.
 
 Three kinds of check, in increasing order of what they can catch:
 
@@ -15,9 +15,9 @@ Three kinds of check, in increasing order of what they can catch:
 3. **Behaviour under a known truth** — planted differential taxa that the
    pipeline should recover, and a null dataset where it should find nothing.
 
-Check 3 is the one that matters most. Agreeing with scikit-bio only proves
-both implementations do the same thing; recovering planted signal and
-staying quiet on null data proves the thing is the right thing.
+Check 3 carries the most weight. Agreement with scikit-bio establishes only
+that two implementations do the same thing; recovering planted signal while
+staying silent on null data establishes that it is the right thing.
 
 Run:  python bin/validate_compositional.py [--project-root .]
 Exits non-zero on the first failure, so it works as a CI gate.

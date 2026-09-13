@@ -9,7 +9,7 @@ Two workflows sharing one pipeline directory:
 
 ## Why two entrypoints instead of one workflow?
 
-Real drug-screen sequencing (sci-Plex, sci-RNA-seq) produces hundreds of GB of raw FASTQ per screen — reprocessing one from scratch isn't practical for a portfolio pipeline, and in practice a lot of real perturbation-analysis work starts from a delivered count matrix rather than re-running alignment per project anyway. `perturbation.nf` reflects that: it starts from a public, already-quantified dataset and does the actual biological analysis. `main.nf` is kept separately to prove the FASTQ→matrix quantification machinery itself works (see its own section below) — the two entrypoints answer different questions and are honest about which one is running on toy data vs. real data.
+Real drug-screen sequencing (sci-Plex, sci-RNA-seq) produces hundreds of GB of raw FASTQ per screen — reprocessing one from scratch is impractical at this scale, and in practice a lot of perturbation analysis starts from a delivered count matrix rather than re-running alignment per project anyway. `perturbation.nf` reflects that: it starts from a public, already-quantified dataset and does the actual biological analysis. `main.nf` is kept separately to prove the FASTQ→matrix quantification machinery itself works (see its own section below) — the two entrypoints answer different questions and are honest about which one is running on toy data vs. real data.
 
 ## Structure
 
@@ -36,7 +36,7 @@ envs/
 config/samples.tsv                   # Sample sheet — main.nf only
 analysis/
   scanpy_analysis.ipynb              # QC/clustering/marker-gene mechanics on main.nf's output
-  perturbation_case_study.ipynb      # Full walkthrough on the real drug-screen data
+  perturbation_case_study.ipynb      # Full analysis of the real drug-screen data
 resources/perturbation/              # Downloaded dataset cache (gitignored, ~470 MB)
 ```
 

@@ -10,9 +10,9 @@ Two questions, two tests:
 
 The per-feature test is run twice: once directly on the point-estimate CLR,
 and once as a Monte-Carlo average over Dirichlet draws from each sample's
-count posterior (the ALDEx2 idea). The second is slower and almost always
-more conservative — see `differential_abundance` for why that difference is
-the interesting part, not an inconvenience.
+count posterior (the ALDEx2 approach). The second is slower and almost always
+more conservative; both are reported, since the gap between them quantifies
+how much of a hit rests on sparse counts.
 """
 
 from __future__ import annotations

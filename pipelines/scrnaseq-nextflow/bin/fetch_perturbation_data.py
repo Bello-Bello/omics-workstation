@@ -4,8 +4,8 @@
 Called as: fetch_perturbation_data.py <dataset_name> <output_path>
 
 Only one dataset is wired up (sciplex2) rather than a generic loader —
-adding a second real dataset later is a one-line addition to DATASETS, not
-a reason to build a plugin system for a single portfolio pipeline.
+adding a second real dataset later is a one-line addition to DATASETS, which
+does not justify a plugin system at this scale.
 """
 
 import sys

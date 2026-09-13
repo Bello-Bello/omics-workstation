@@ -1,0 +1,20 @@
+# Environment for the compositional analysis stage only — deliberately small.
+# The QIIME2 steps run in the pinned qiime2/amplicon container instead
+# (see nextflow.config); mixing the two would mean solving the whole QIIME2
+# stack just to run a t-test, and would tie the analysis code to QIIME2's
+# release cadence for no benefit.
+#
+# scikit-bio and statsmodels are here as *references*, not as the
+# implementation: validate.py cross-checks this pipeline's from-scratch
+# PERMANOVA and Benjamini-Hochberg against them.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - numpy=1.26
+  - scipy=1.13
+  - pandas=2.2
+  - matplotlib=3.8
+  - scikit-bio=0.6
+  - statsmodels=0.14

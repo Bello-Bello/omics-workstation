@@ -49,6 +49,18 @@ pace if it starts crowding out the polish/application-sending phase.
       [pipelines/scrnaseq-nextflow/](pipelines/scrnaseq-nextflow/) and its
       Snakemake cross-verification in
       [pipelines/scrnaseq-snakemake/](pipelines/scrnaseq-snakemake/).
+- [x] **16S amplicon / microbiome** (added after scRNA-seq): QIIME2 →
+      DADA2 → taxonomy → compositional statistics on real public Atacama
+      soil data, in Nextflow — see
+      [pipelines/amplicon-nextflow/](pipelines/amplicon-nextflow/). Added
+      when microbiome and QIIME2 turned up as hard requirements in
+      agricultural/soil-biology postings that the RNA-seq work did not
+      speak to. The compositional half (CLR, Aitchison distance, PERMANOVA,
+      Dirichlet Monte-Carlo differential abundance) is implemented from
+      scratch in the same spirit as the stats module above, and validated
+      against scikit-bio and statsmodels. Found and fixed a real bug in the
+      standard zero-replacement step, which goes negative on shallow
+      samples.
 - [ ] **Variant calling (DNA-seq)** (after scRNA-seq): GATK best-practices style —
       align (BWA) → mark duplicates → call variants (GATK HaplotypeCaller) →
       filter/annotate. Look at nf-core/sarek as a reference implementation,

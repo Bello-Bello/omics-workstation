@@ -4,6 +4,7 @@
 [![rnaseq-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml)
 [![scrnaseq-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-nextflow-ci.yml)
 [![scrnaseq-snakemake CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/scrnaseq-snakemake-ci.yml)
+[![amplicon-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/amplicon-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/amplicon-nextflow-ci.yml)
 
 A bioinformatics portfolio built on **real published RNA-seq data**, not toy
 examples — automation & reproducible workflows, statistical modeling, and
@@ -41,7 +42,16 @@ calls — cross-verified, not just individually run:
   cross-verification approach as the bulk pipelines, confirmed to produce
   **exactly matching** results (cell/gene/cluster counts, per-drug DE hit
   counts) against the Nextflow version
-- **All four pipelines have real CI** (badges above) — every push
+- **[pipelines/amplicon-nextflow/](pipelines/amplicon-nextflow/)** — 16S
+  amplicon (microbiome) pipeline on real public soil data: QIIME2 in a
+  pinned container for demultiplexing, DADA2 denoising and taxonomic
+  classification, then compositional statistics implemented from first
+  principles — CLR, Aitchison distance, PERMANOVA, and depth-aware
+  differential abundance — cross-checked against scikit-bio and statsmodels.
+  Recovers the expected soil biology: *Bradyrhizobium* and *Candidatus
+  Nitrososphaera* enriched in vegetated soil, the desiccation-resistant
+  *Rubrobacter* in barren.
+- **All five pipelines have real CI** (badges above) — every push
   re-downloads the real test/public data and re-runs the full pipeline on
   GitHub's own runners, not just a lint check
 
@@ -53,7 +63,8 @@ own README — start with whichever's relevant:
 [rnaseq-nextflow](pipelines/rnaseq-nextflow/README.md) ·
 [stats notebook](stats/rnaseq-stats-notebook/README.md) ·
 [scrnaseq-nextflow](pipelines/scrnaseq-nextflow/README.md) ·
-[scrnaseq-snakemake](pipelines/scrnaseq-snakemake/README.md)
+[scrnaseq-snakemake](pipelines/scrnaseq-snakemake/README.md) ·
+[amplicon-nextflow](pipelines/amplicon-nextflow/README.md)
 
 ## Why two workflow managers for the same pipeline
 

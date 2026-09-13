@@ -1,0 +1,123 @@
+name: amplicon-nextflow CI
+
+on:
+  push:
+    paths:
+      - "pipelines/amplicon-nextflow/**"
+      - ".github/workflows/amplicon-nextflow-ci.yml"
+  pull_request:
+    paths:
+      - "pipelines/amplicon-nextflow/**"
+
+jobs:
+  # Fast gate: the statistics are checked against scikit-bio and statsmodels
+  # before spending ~15 minutes on DADA2. If the maths is wrong, the pipeline
+  # run would only produce wrong numbers more slowly.
+  validate-statistics:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/amplicon-nextflow
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          channels: conda-forge,bioconda
+
+      # Built with an explicit prefix rather than by name: this is the same
+      # env file Nextflow hands to the analysis process, so building it here
+      # also proves the env still solves before the long job starts.
+      - name: Build the analysis environment
+        run: conda env create -f envs/compositional.yaml -p ./ci-env
+
+      - name: Cross-check CLR, PERMANOVA and Benjamini-Hochberg
+        run: ./ci-env/bin/python bin/validate_compositional.py
+
+  run-workflow:
+    needs: validate-statistics
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/amplicon-nextflow
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nextflow
+        run: |
+          curl -s https://get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+          nextflow -version
+
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          channels: conda-forge,bioconda
+
+      # Real public data (Atacama soil, Neilson et al. 2017), fetched fresh
+      # at ~300 MB — not committed. The `test` profile cuts permutations and
+      # Monte-Carlo draws but runs the same reads through the same DADA2.
+      - name: Run main.nf
+        run: nextflow run main.nf -profile test
+
+      - name: Verify real output was produced
+        run: |
+          test -s results/qiime/denoising-stats.tsv
+          test -s results/exported/feature-table.tsv
+          test -s results/compositional/summary.json
+          test -s results/compositional/report.md
+          test -s results/compositional/genus_pca.png
+          test -s results/compositional/genus_heatmap_dendrogram.png
+
+          python3 - <<'PY'
+          import json, sys
+          s = json.load(open("results/compositional/summary.json"))
+          failures = []
+          for level in s["levels"]:
+              name = level["level"]
+              print(f"{name}: {level['n_samples']} samples, {level['n_features']} features, "
+                    f"PERMANOVA p={level['permanova']['p_value']:.4f} "
+                    f"R2={level['permanova']['r_squared']:.3f}, "
+                    f"{level['n_significant']} significant taxa")
+              # The pipeline must reach real data, not just produce files.
+              if level["n_samples"] < 30:
+                  failures.append(f"{name}: only {level['n_samples']} samples survived filtering")
+              if level["n_features"] < 10:
+                  failures.append(f"{name}: only {level['n_features']} features survived filtering")
+
+          # Vegetation is a real, strong effect in this dataset. If it stops
+          # being detectable, something upstream broke (a demux flag, a
+          # truncation length) in a way that still produces valid-looking files.
+          genus = next(l for l in s["levels"] if l["level"] == "genus")
+          if genus["permanova"]["p_value"] >= 0.05:
+              failures.append(f"genus PERMANOVA p={genus['permanova']['p_value']} — "
+                              "vegetation effect not detected")
+          if genus["n_significant"] < 1:
+              failures.append("genus: no differentially abundant taxa found")
+
+          if failures:
+              for f in failures:
+                  print(f"::error::{f}")
+              sys.exit(1)
+          print("All output assertions passed.")
+          PY
+
+      - name: Show the generated report
+        if: always()
+        run: cat results/compositional/report.md || true
+
+      - name: Upload results as a build artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: amplicon-nextflow-results
+          path: |
+            pipelines/amplicon-nextflow/results/compositional/
+            pipelines/amplicon-nextflow/results/qiime/denoising-stats.tsv
+            pipelines/amplicon-nextflow/results/exported/
+          retention-days: 14

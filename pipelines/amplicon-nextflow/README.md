@@ -107,6 +107,11 @@ envs/compositional.yaml          # the small analysis env (not QIIME2)
 
 ## Quick start
 
+New to this? Start with **[TUTORIAL.md](TUTORIAL.md)** — a hands-on walk
+through setup, running it, and reading the output, with what you should see
+at each step. [WALKTHROUGH.md](WALKTHROUGH.md) explains the concepts behind
+each stage once you have it running.
+
 Needs Docker (for the QIIME2 container), conda, and Nextflow.
 
 ```bash

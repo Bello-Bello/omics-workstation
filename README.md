@@ -50,7 +50,9 @@ calls — cross-verified, not just individually run:
   differential abundance — cross-checked against scikit-bio and statsmodels.
   Recovers the expected soil biology: *Bradyrhizobium* and *Candidatus
   Nitrososphaera* enriched in vegetated soil, the desiccation-resistant
-  *Rubrobacter* in barren. A step-by-step
+  *Rubrobacter* in barren. A hands-on
+  [TUTORIAL.md](pipelines/amplicon-nextflow/TUTORIAL.md) walks through
+  running it and reading the output; a companion
   [WALKTHROUGH.md](pipelines/amplicon-nextflow/WALKTHROUGH.md) explains each
   stage and what goes wrong at it.
 - **All five pipelines have real CI** (badges above) — every push

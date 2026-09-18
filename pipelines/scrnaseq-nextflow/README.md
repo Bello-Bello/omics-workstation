@@ -5,11 +5,20 @@
 Two workflows sharing one pipeline directory:
 
 - **`main.nf`** — STARsolo quantification from raw 10x reads (test-scale chr19 data, see [status](#status))
-- **`perturbation.nf`** — QC → normalize → cluster → differential expression on a real public drug-screen count matrix (Srivatsan et al. 2020 sci-Plex, 24k A549 cells, 4 drugs)
+- **`perturbation.nf`** — QC → normalize → cluster → differential expression on a public drug-screen count matrix (Srivatsan et al. 2020 sci-Plex, 24k A549 cells, 4 drugs)
 
-## Why two entrypoints instead of one workflow?
+## Why two entry points instead of one workflow
 
-Real drug-screen sequencing (sci-Plex, sci-RNA-seq) produces hundreds of GB of raw FASTQ per screen — reprocessing one from scratch is impractical at this scale, and in practice a lot of perturbation analysis starts from a delivered count matrix rather than re-running alignment per project anyway. `perturbation.nf` reflects that: it starts from a public, already-quantified dataset and does the actual biological analysis. `main.nf` is kept separately to prove the FASTQ→matrix quantification machinery itself works (see its own section below) — the two entrypoints answer different questions and are honest about which one is running on toy data vs. real data.
+Real drug-screen sequencing produces hundreds of GB of raw FASTQ per screen.
+Reprocessing one from scratch is impractical at that scale, and in practice a
+lot of perturbation analysis starts from a delivered count matrix anyway
+rather than re-running alignment per project.
+
+`perturbation.nf` reflects that. It starts from a public, already-quantified
+dataset and does the biological analysis. `main.nf` exists separately to prove
+the FASTQ-to-matrix machinery works. The two answer different questions, and
+keeping them apart makes it obvious which one runs on toy data and which runs
+on real data.
 
 ## Structure
 
@@ -33,14 +42,14 @@ perturbation/                        # Reusable Python package (not dataset-spec
 envs/
   star.yaml                          # STAR only (main.nf)
   scanpy.yaml                        # scanpy + pertpy (perturbation.nf)
-config/samples.tsv                   # Sample sheet — main.nf only
+config/samples.tsv                   # Sample sheet, main.nf only
 analysis/
   scanpy_analysis.ipynb              # QC/clustering/marker-gene mechanics on main.nf's output
-  perturbation_case_study.ipynb      # Full analysis of the real drug-screen data
+  perturbation_case_study.ipynb      # Full analysis of the drug-screen data
 resources/perturbation/              # Downloaded dataset cache (gitignored, ~470 MB)
 ```
 
-## Perturbation workflow — setup & run
+## Perturbation workflow: setup and run
 
 ```bash
 conda create -n nextflow -c bioconda -c conda-forge nextflow -y
@@ -49,26 +58,31 @@ cd pipelines/scrnaseq-nextflow
 nextflow run perturbation.nf
 ```
 
-No Docker profile for this workflow — it's pure Python/Scanpy with no platform-specific binary behavior (unlike STARsolo below), so plain conda is reproducible enough on its own. First run downloads the dataset (~470 MB, cached under `resources/perturbation/` afterward) then runs the analysis; on this machine, QC through DE end-to-end took about 2 minutes once the data was local.
+There is no Docker profile for this workflow. It is pure Python and Scanpy
+with no platform-specific binary behaviour, unlike STARsolo below, so plain
+conda is reproducible enough on its own.
 
-## Quantification workflow (`main.nf`) — setup & run
+The first run downloads the dataset (about 470 MB, cached under
+`resources/perturbation/` afterward) and then runs the analysis. On this
+machine, QC through DE took roughly 2 minutes once the data was local.
 
-**On macOS: use `-profile docker`, not conda — required, not optional.**
-STAR 2.7.11b's conda/native build has a real, documented macOS Sonoma+ bug
-([alexdobin/STAR#2142](https://github.com/alexdobin/STAR/issues/2142)) in
-its shared-memory handling that breaks `--soloFeatures Gene` quantification
-entirely (`Transcriptome.cpp: could not open input file /geneInfo.tab`,
-regardless of genome index setup — confirmed by testing with no working
-flag-based fix, only a source patch + recompile). The Linux container
-sidesteps it completely since the bug is in macOS-specific shared-memory
-syscall behavior, not the STAR version itself:
+## Quantification workflow (`main.nf`): setup and run
+
+**On macOS, use `-profile docker` rather than conda. This is required, not
+optional.** STAR 2.7.11b's conda and native build has a documented macOS
+Sonoma+ bug ([alexdobin/STAR#2142](https://github.com/alexdobin/STAR/issues/2142))
+in its shared-memory handling, which breaks `--soloFeatures Gene`
+quantification outright (`Transcriptome.cpp: could not open input file
+/geneInfo.tab`, regardless of how the genome index is set up). I tested for a
+flag-based workaround and there isn't one; the only fix is patching the source
+and recompiling. The Linux container sidesteps it, because the bug is in
+macOS-specific shared-memory syscall behaviour rather than in STAR itself.
 
 ```bash
 nextflow run main.nf -profile docker
 ```
 
-On Linux (including CI), plain conda works fine and is untested-but-expected
-to work given the bug is macOS-specific:
+On Linux, including CI, plain conda works:
 ```bash
 nextflow run main.nf
 ```
@@ -77,26 +91,38 @@ nextflow run main.nf
 
 **`perturbation.nf`** (`results/perturbation/`):
 - `processed.h5ad` — filtered, normalized, clustered AnnData (23,966 cells x 35,916 genes on the real run)
-- `differential_expression.csv` — one row per gene per drug, Wilcoxon test vs. vehicle control (logfoldchange, p-value, adjusted p-value)
+- `differential_expression.csv` — one row per gene per drug, Wilcoxon test vs vehicle control (logfoldchange, p-value, adjusted p-value)
 - `summary.json` — cell/gene/cluster counts and significant-DE-gene counts per drug
-- `umap_condition_cluster.png` — UMAP colored by drug and by Leiden cluster
+- `umap_condition_cluster.png` — UMAP coloured by drug and by Leiden cluster
 
 **`main.nf`** (`results/starsolo/`):
 - `{sample}.Solo.out/Gene/raw/` — sparse count matrix triplet per sample
-- `{sample}.Log.final.out` — real STAR mapping statistics
+- `{sample}.Log.final.out` — STAR mapping statistics
 
 ## The `perturbation/` package
 
-Shared by `perturbation.nf`, the Snakemake port ([../scrnaseq-snakemake/](../scrnaseq-snakemake/)), and the notebook — the same QC/normalization/clustering/DE logic runs from all three rather than being copy-pasted into each. Column names for a new dataset (which column holds the perturbation label, the dose, what the control is called) are the only thing that changes between datasets — passed as CLI args / Nextflow params / Snakemake config, not hardcoded in the package itself.
+Shared by `perturbation.nf`, the Snakemake port
+([../scrnaseq-snakemake/](../scrnaseq-snakemake/)) and the notebook, so the
+same QC, normalization, clustering and DE logic runs from all three instead of
+being copy-pasted into each.
+
+Moving to a new dataset only means changing column names: which column holds
+the perturbation label, which holds the dose, what the control is called.
+Those are passed as CLI args, Nextflow params or Snakemake config, not
+hardcoded in the package.
 
 ## Dataset
 
-Srivatsan et al. 2020, *Science* — sci-Plex: A549 (human lung adenocarcinoma) cells exposed to one of four compounds (dexamethasone, nutlin-3a, BMS-345541, vorinostat/SAHA) across seven doses in triplicate, plus vehicle controls. Fetched via [pertpy](https://pertpy.readthedocs.io/)'s curated copy of the [scPerturb](http://projects.sanderlab.org/scperturb/) release of this dataset.
+Srivatsan et al. 2020, *Science*, sci-Plex. A549 human lung adenocarcinoma
+cells exposed to one of four compounds (dexamethasone, nutlin-3a, BMS-345541,
+vorinostat/SAHA) across seven doses in triplicate, plus vehicle controls.
+Fetched via [pertpy](https://pertpy.readthedocs.io/)'s curated copy of the
+[scPerturb](http://projects.sanderlab.org/scperturb/) release.
 
 ## Status
 
-- [x] STARsolo quantification runs end-to-end (Docker; real macOS-specific STAR bug found, diagnosed, and worked around — documented above)
-- [x] Downstream Scanpy analysis on `main.nf` output (QC, filtering, clustering, marker genes) — [analysis/scanpy_analysis.ipynb](analysis/scanpy_analysis.ipynb)
-- [x] Perturbation screen analysis on real public drug-screen data (QC, clustering, differential expression) — [analysis/perturbation_case_study.ipynb](analysis/perturbation_case_study.ipynb)
-- [x] Cross-verified against an independent Snakemake implementation — [../scrnaseq-snakemake/](../scrnaseq-snakemake/): both produce **exactly matching** results on the same real data — 23,966 cells x 35,916 genes post-QC, 7 Leiden clusters, and identical significant-DE-gene counts per drug (Dex: 5,415, Nutlin: 6,689, BMS: 6,291, SAHA: 8,037)
-- [ ] CI
+- [x] STARsolo quantification runs end-to-end (Docker; macOS-specific STAR bug found, diagnosed and worked around, documented above)
+- [x] Downstream Scanpy analysis on `main.nf` output (QC, filtering, clustering, marker genes), [analysis/scanpy_analysis.ipynb](analysis/scanpy_analysis.ipynb)
+- [x] Perturbation screen analysis on public drug-screen data (QC, clustering, differential expression), [analysis/perturbation_case_study.ipynb](analysis/perturbation_case_study.ipynb)
+- [x] Cross-verified against an independent Snakemake implementation, [../scrnaseq-snakemake/](../scrnaseq-snakemake/). Both produce **exactly matching** results on the same data: 23,966 cells x 35,916 genes post-QC, 7 Leiden clusters, and identical significant-DE-gene counts per drug (Dex 5,415, Nutlin 6,689, BMS 6,291, SAHA 8,037)
+- [x] CI

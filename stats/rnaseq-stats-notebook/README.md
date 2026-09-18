@@ -1,31 +1,31 @@
 # rnaseq-stats-notebook
 
-Statistical modeling built entirely on **real DESeq2 output** from
-[rnaseq-snakemake](../../pipelines/rnaseq-snakemake/) (real yeast RNA-seq,
-GSE110004, `WT` vs `RAP1_IAA`), not synthetic data.
+Statistical modelling built on **real DESeq2 output** from
+[rnaseq-snakemake](../../pipelines/rnaseq-snakemake/) (yeast RNA-seq,
+GSE110004, `WT` vs `RAP1_IAA`). No synthetic data anywhere in it.
 
 Each method is reimplemented from scratch in Python and validated against
-DESeq2's own numbers, which makes the modelling assumptions explicit and
-auditable rather than delegated to the package's defaults.
+DESeq2's own numbers. The point is to make the modelling assumptions explicit
+and auditable instead of delegating them to a package's defaults.
 
 ## Contents (`hypothesis_testing.ipynb`)
 
-1. **Hypothesis testing** — t-test and Wilcoxon rank-sum vs DESeq2's
-   own p-values per gene; why RNA-seq needs a purpose-built model rather than
+1. **Hypothesis testing.** t-test and Wilcoxon rank-sum against DESeq2's own
+   per-gene p-values, and why RNA-seq needs a purpose-built model rather than
    off-the-shelf tests on small-n discrete count data.
-2. **Negative binomial GLM** — the actual model DESeq2 fits, implemented from
+2. **Negative binomial GLM.** The model DESeq2 actually fits, implemented from
    scratch via `statsmodels`, isolating what empirical Bayes shrinkage does
-   and doesn't contribute (a real correction made mid-analysis when initial
-   results contradicted the first hypothesis — see the notebook's own
-   markdown for the full account).
-3. **Multiple testing correction** — Bonferroni vs Benjamini-Hochberg/FDR,
-   with a from-scratch BH implementation validated to exactly reproduce
-   DESeq2's `padj` column.
-4. **PCA & clustering** — sample-level QC, PCA built from scratch via SVD,
-   plus a correlation clustermap; includes an honest finding where the two
-   methods disagreed and why.
-5. **Standard DE visualizations** — MA plot, volcano plot, and a heatmap of
-   the significant genes.
+   and does not contribute. This section includes a correction I made
+   mid-analysis, when the initial results contradicted my first hypothesis;
+   the notebook's own markdown has the full account.
+3. **Multiple testing correction.** Bonferroni against Benjamini-Hochberg/FDR,
+   with a from-scratch BH implementation that reproduces DESeq2's `padj`
+   column exactly.
+4. **PCA and clustering.** Sample-level QC, PCA built from scratch via SVD,
+   plus a correlation clustermap. The two methods disagreed here, and the
+   notebook says so and works through why.
+5. **Standard DE visualizations.** MA plot, volcano plot, and a heatmap of the
+   significant genes.
 
 ## Setup
 
@@ -41,9 +41,9 @@ cd stats/rnaseq-stats-notebook
 jupyter lab
 ```
 
-Open `hypothesis_testing.ipynb` and run all cells — it reads directly from
-`../../pipelines/rnaseq-snakemake/results/deseq2/` (run that pipeline first
-if those files aren't there yet).
+Open `hypothesis_testing.ipynb` and run all cells. It reads directly from
+`../../pipelines/rnaseq-snakemake/results/deseq2/`, so run that pipeline first
+if those files are not there yet.
 
 ## Status
 

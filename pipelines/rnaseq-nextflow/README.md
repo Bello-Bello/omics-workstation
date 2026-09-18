@@ -2,10 +2,9 @@
 
 [![rnaseq-nextflow CI](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml/badge.svg)](https://github.com/Bello-Bello/omics-workstation/actions/workflows/rnaseq-nextflow-ci.yml)
 
-Nextflow (DSL2) port of [rnaseq-snakemake](../rnaseq-snakemake/) — same biology,
-same tools, same real yeast dataset (GSE110004, WT vs RAP1_IAA), different
-workflow manager. Results are cross-verified against the Snakemake
-implementation.
+Nextflow (DSL2) port of [rnaseq-snakemake](../rnaseq-snakemake/). Same biology,
+same tools, same yeast dataset (GSE110004, WT vs RAP1_IAA), different workflow
+manager. Results are cross-verified against the Snakemake implementation.
 
 ## Structure
 
@@ -27,10 +26,10 @@ conda create -n nextflow -c bioconda -c conda-forge nextflow -y
 conda activate nextflow
 ```
 
-Docker is optional (see **Run** below) but if you want it, install
+Docker is optional (see **Run** below). If you want it, install
 [Docker Desktop](https://www.docker.com/products/docker-desktop/) first, then
-build the one custom image (everything else pulls pre-built BioContainers
-images automatically):
+build the one custom image. Everything else pulls pre-built BioContainers
+images automatically.
 
 ```bash
 docker build -t omics-deseq2:1.0 -f docker/deseq2.Dockerfile .
@@ -50,39 +49,40 @@ cd pipelines/rnaseq-nextflow
 nextflow run main.nf -profile docker
 ```
 
-Both paths run the identical pipeline logic against identical containers/envs
-pinned to explicit versions — the only process not sourced from a public,
+Both paths run identical pipeline logic against containers and environments
+pinned to explicit versions. The one process not sourced from a public
 pre-built image is `DESEQ2`, which uses the locally-built `omics-deseq2:1.0`
-(see **Setup**) since its 4 R/Bioconductor packages aren't bundled together
-in any single BioContainers image.
+(see **Setup**), because its four R/Bioconductor packages are not bundled
+together in any single BioContainers image.
 
-Nextflow builds each process's conda environment (or pulls its container
-image) on first run — a one-time cost, cached under `work/` afterward.
+Nextflow builds each process's conda environment, or pulls its container
+image, on first run. That is a one-time cost, cached under `work/` afterward.
 
-## A reproducibility caveat worth knowing
+## Conda and Docker can disagree at the margin
 
-Running this pipeline via conda vs Docker on the same machine can produce
-**very slightly different results for genes sitting right at a significance
-threshold** — in one comparison, 2 borderline genes (padj ≈ 0.05–0.06) flipped
-across `padj < 0.05` between the two runs, while every clearly-significant
-gene matched exactly. The cause: conda resolves an **osx-64** build of
-`salmon` on macOS, while every Docker container is necessarily **linux-64**
-(Docker Desktop runs a Linux VM even on Mac) — two genuinely different
-compiled binaries for the same nominal software version, which can produce
-tiny floating-point differences in salmon's EM-based multi-mapping-read
-resolution. This isn't a bug or a misconfiguration: it's a real illustration
-that **matching a software version number doesn't guarantee bit-identical
-results — true reproducibility needs the same platform/architecture, not
-just the same tool version.** It's also a genuine argument in Docker's
-favor over conda: a container's results are reproducible *across any
-machine*, since the platform itself is fixed by the image, whereas a
-conda-resolved environment inherits whatever platform conda is solving for
-locally.
+Running this pipeline via conda and via Docker on the same machine can give
+**slightly different results for genes sitting right at a significance
+threshold**. In one comparison, 2 borderline genes (padj around 0.05 to 0.06)
+crossed the `padj < 0.05` line between the two runs. Every clearly significant
+gene matched exactly.
 
-Each container tag here is explicit and pinned (not `latest`), so within
-either path — conda or Docker — results are fully deterministic and
-reproducible on their own; the two paths just aren't guaranteed to match
-each other exactly at the margin.
+The cause is the build, not the configuration. Conda resolves an **osx-64**
+build of `salmon` on macOS, while every Docker container is **linux-64**
+(Docker Desktop runs a Linux VM even on a Mac). Those are different compiled
+binaries for the same nominal software version, and they can produce tiny
+floating-point differences in salmon's EM-based resolution of multi-mapping
+reads.
+
+So matching a software version number does not guarantee bit-identical
+results. Reproducibility needs the same platform and architecture, not just
+the same tool version. This is also a point in Docker's favour over conda for
+this kind of work: a container's results reproduce on any machine because the
+image fixes the platform, whereas a conda-resolved environment inherits
+whatever platform conda is solving for locally.
+
+Each container tag here is pinned rather than `latest`, so within either path
+results are deterministic and reproducible on their own. The two paths just
+are not guaranteed to match each other exactly at the margin.
 
 ## Output
 
@@ -93,4 +93,4 @@ Same shape as the Snakemake version, under `results/`:
 
 - [x] Runs end-to-end (conda)
 - [x] Runs end-to-end (Docker)
-- [x] Compared against Snakemake version — same DE results (conda-to-conda); see the reproducibility caveat above for the conda-vs-Docker comparison
+- [x] Compared against Snakemake version, same DE results (conda-to-conda). See the section above for the conda-vs-Docker comparison.

@@ -18,3 +18,9 @@ pipelines/*/.nextflow.log*
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
+
+# Never commit these: study-plan and tutorial docs live in ~/Desktop/learning_home
+ROADMAP.md
+resources.md
+TUTORIAL.md
+WALKTHROUGH.md
